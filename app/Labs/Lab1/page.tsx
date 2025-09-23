@@ -285,8 +285,9 @@ export default function Lab1() {
       Please
       <a href="https://www.lipsum.com" id="wd-lipsum">click here</a>
       to get dummy text<br />
-      <a href="https://github.com/Rushikesh-pawar/kambaz-next-js/" id="wd-lipsum">click here</a>
-      to go to my repo<br />
+      <h4>Link to my github repo</h4>
+      <a href="https://github.com/Rushikesh-pawar/kambaz-next-js/" id="wd-lipsum"> click here </a> 
+      to go to my repo <br />
     </div>
 
 
