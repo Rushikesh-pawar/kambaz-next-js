@@ -17,6 +17,7 @@ import BootstrapTables from './BootstrapTables';
 import BootstrapLists from './BootstrapLists';
 import BootstrapForms from './BootstrapForms';
 import BootstrapNavigation from './BootstrapNavigation';
+import ReactIcons from './ReactIcons';
 
 export default function Lab2() {
   return (
@@ -84,6 +85,7 @@ This heading has same style as paragraph above
 <Float></Float>
 <GridLayout></GridLayout>
 <Flex></Flex>
+<ReactIcons></ReactIcons>
 <BootstrapGrids></BootstrapGrids>
 <ScreenSizeLabel></ScreenSizeLabel>
 <BootstrapTables></BootstrapTables>
