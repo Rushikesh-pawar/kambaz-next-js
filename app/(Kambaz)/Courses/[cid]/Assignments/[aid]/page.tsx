@@ -26,7 +26,7 @@ export default function EditAssignmentPage({
       
       <h3 className="mb-3">Edit Assignment {aid} · Course {cid}</h3>
 
-      {/* one centered, vertical column like the screenshot */}
+     
       <div className="wd-editor-container mx-auto">
         <Form>
           {/* Assignment Name */}

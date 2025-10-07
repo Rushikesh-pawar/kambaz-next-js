@@ -11,7 +11,7 @@ import {
 
 import { IoSearchOutline, IoEllipsisVertical } from 'react-icons/io5';
 import { FaPlus } from 'react-icons/fa6';
-import { FaCheckCircle } from 'react-icons/fa'; // NOTE: from 'fa' set, not 'fa6'
+import { FaCheckCircle } from 'react-icons/fa'; 
 import { BsGripVertical } from 'react-icons/bs';
 import { HiOutlineDocumentText } from 'react-icons/hi';
 
