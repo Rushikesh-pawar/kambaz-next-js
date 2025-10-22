@@ -1,247 +1,67 @@
-'use client';
-import Link from 'next/link';
-import {
-  Button,
-  FormControl,
-  InputGroup,
-  ListGroup,
-  ListGroupItem,
-  Badge,
-} from 'react-bootstrap';
+"use client";
 
-import { IoSearchOutline, IoEllipsisVertical } from 'react-icons/io5';
-import { FaPlus } from 'react-icons/fa6';
-import { FaCheckCircle } from 'react-icons/fa'; 
-import { BsGripVertical } from 'react-icons/bs';
-import { HiOutlineDocumentText } from 'react-icons/hi';
+import Link from "next/link";
+import { ListGroup, ListGroupItem, Badge } from "react-bootstrap";
+import { BsGripVertical } from "react-icons/bs";
+import { IoMdArrowDropdown } from "react-icons/io";
+import { PiNotePencilBold } from "react-icons/pi";
+import { useParams } from "next/navigation";
+import AssignmentControls from "./AssignmentControls";
+import * as db from "../../../Database";
+import LessonControlButtons from "../Modules/LessonControlButtons";
 
-export default function AssignmentsPage() {
+export default function Assignments() {
+  const { cid } = useParams();
+  const assignments = db.assignment; // Make sure Database/index.ts exports `assignments`
+  const courseAssignments = assignments.filter((a) => a.course === cid);
+
   return (
     <div id="wd-assignments" className="p-3">
-    
-      <div className="wd-assignments-container mx-auto">
-     
-        <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-      
-          <div style={{ maxWidth: 420 }} className="flex-grow-1">
-            <InputGroup>
-              <InputGroup.Text>
-                <IoSearchOutline className="fs-6" />
-              </InputGroup.Text>
-              <FormControl
-                id="wd-assignments-search"
-                placeholder="Search for Assignment"
-              />
-            </InputGroup>
+      <AssignmentControls />
+
+      <ListGroup className="rounded-0">
+        <ListGroupItem className="p-0 mb-5 fs-5 border-gray">
+          <div className="wd-title p-3 ps-2 bg-secondary d-flex align-items-center">
+            <BsGripVertical className="me-2 fs-3" />
+            <IoMdArrowDropdown />
+            <span className="ms-2 text-uppercase">Assignments</span>
+            <Badge bg="light" text="dark" className="ms-auto px-3 py-2 fw-normal">
+              {courseAssignments.length} Assignments
+            </Badge>
           </div>
 
-      
-          <div className="d-flex align-items-center gap-2">
-            <Button id="wd-add-group-btn" variant="secondary" size="lg">
-              <FaPlus className="me-2" />
-              Group
-            </Button>
-            <Button id="wd-add-assignment-btn" variant="danger" size="lg">
-              <FaPlus className="me-2" />
-              Assignment
-            </Button>
-          </div>
-        </div>
+          <ListGroup className="wd-assignment-list rounded-0">
+            {courseAssignments.length === 0 && (
+              <ListGroupItem className="p-3 text-muted">
+                No assignments found for this course.
+              </ListGroupItem>
+            )}
 
-        
-        <ListGroup className="rounded-0">
-          <ListGroupItem className="p-0 mb-4 fs-5 border-gray wd-assignments-group">
-          
-            <div className="group-header p-3 ps-2 bg-secondary d-flex align-items-center">
-              <BsGripVertical className="me-2 fs-3" />
-              <span className="fw-semibold text-uppercase">Assignments</span>
+            {courseAssignments.map((assignment) => (
+              <ListGroupItem
+                key={assignment._id}
+                className="wd-assignment-list-item p-3 ps-2 d-flex align-items-center justify-content-between"
+              >
+                <div className="d-flex align-items-center">
+                  <BsGripVertical className="me-2 fs-3" />
+                  <PiNotePencilBold color="green" className="me-2 fs-3" />
+                  <Link
+                    href={`/Courses/${cid}/Assignments/${assignment._id}`}
+                    className="wd-assignment-link text-decoration-none"
+                  >
+                    {assignment.title}
+                  </Link>
+                </div>
 
-              <div className="ms-auto d-flex align-items-center gap-2">
-                <Badge bg="light" text="dark" className="px-3 py-2 fw-normal">
-                  60% of Total
-                </Badge>
-                <Button variant="light" size="sm" className="border">
-                  <FaPlus />
-                </Button>
-                <Button variant="light" size="sm" className="border">
-                  <IoEllipsisVertical />
-                </Button>
-              </div>
-            </div>
-
-       
-            <ListGroup className="rounded-0">
-             
-              <ListGroupItem className="wd-assignment p-3 ps-2">
-                <div className="d-flex align-items-start gap-2">
-                  <BsGripVertical className="fs-4 mt-1" />
-                  <div className="mt-1">
-                    <HiOutlineDocumentText className="text-success fs-4" />
-                  </div>
-
-                  <div className="flex-fill">
-                    <Link
-                      href="/Courses/1234/Assignments/A1"
-                      className="wd-assignment-title text-decoration-none text-dark"
-                    >
-                      Assignment 1
-                    </Link>
-
-                    <div className="wd-assignment-line1">
-                      <span className="wd-assign-type">Multiple Modules</span>
-                      <span className="mx-2 text-muted">|</span>
-                      <span className="wd-assign-availability text-muted">
-                        <span className="label">Not available until</span> Sept 6 at 12:00am
-                      </span>
-                    </div>
-
-                    <div className="wd-assignment-line2 text-muted">
-                      <span className="wd-assign-due">
-                        <span className="label">Due</span> Spet 13 at 11:59pm
-                      </span>
-                      <span className="mx-2">|</span>
-                      <span>230 pts</span>
-                    </div>
-                  </div>
-
-                  <div className="wd-assign-right-controls text-muted">
-                    <FaCheckCircle className="text-success me-2" />
-                    <IoEllipsisVertical className="fs-5" />
-                  </div>
+                <div className="d-flex flex-column align-items-end">
+                  <LessonControlButtons />
+                  <small className="text-muted mt-1">Assignment Weightage - 5%</small>
                 </div>
               </ListGroupItem>
-
-            
-              <ListGroupItem className="wd-assignment p-3 ps-2">
-                <div className="d-flex align-items-start gap-2">
-                  <BsGripVertical className="fs-4 mt-1" />
-                  <div className="mt-1">
-                    <HiOutlineDocumentText className="text-success fs-4" />
-                  </div>
-
-                  <div className="flex-fill">
-                    <Link
-                      href="/Courses/1234/Assignments/A2"
-                      className="wd-assignment-title text-decoration-none text-dark"
-                    >
-                      Assignment 2
-                    </Link>
-
-                    <div className="wd-assignment-line1">
-                      <span className="wd-assign-type">Multiple Modules</span>
-                      <span className="mx-2 text-muted">|</span>
-                      <span className="wd-assign-availability text-muted">
-                        <span className="label">Not available until</span> Spet 30 at 12:00am
-                      </span>
-                    </div>
-
-                    <div className="wd-assignment-line2 text-muted">
-                      <span className="wd-assign-due">
-                        <span className="label">Due</span> Oct 12 at 11:59pm
-                      </span>
-                      <span className="mx-2">|</span>
-                      <span>306 pts</span>
-                    </div>
-                  </div>
-
-                  <div className="wd-assign-right-controls text-muted">
-                    <FaCheckCircle className="text-success me-2" />
-                    <IoEllipsisVertical className="fs-5" />
-                  </div>
-                </div>
-              </ListGroupItem>
-
-            
-              <ListGroupItem className="wd-assignment p-3 ps-2">
-                <div className="d-flex align-items-start gap-2">
-                  <BsGripVertical className="fs-4 mt-1" />
-                  <div className="mt-1">
-                    <HiOutlineDocumentText className="text-success fs-4" />
-                  </div>
-
-                  <div className="flex-fill">
-                    <Link
-                      href="/Courses/1234/Assignments/A3"
-                      className="wd-assignment-title text-decoration-none text-dark"
-                    >
-                      Assignment 3
-                    </Link>
-
-                    <div className="wd-assignment-line1">
-                      <span className="wd-assign-type">Multiple Modules</span>
-                      <span className="mx-2 text-muted">|</span>
-                      <span className="wd-assign-availability text-muted">
-                        <span className="label">Not available until</span> Oct 24 at 12:00am
-                      </span>
-                    </div>
-
-                    <div className="wd-assignment-line2 text-muted">
-                      <span className="wd-assign-due">
-                        <span className="label">Due</span> Nov 30 at 11:59pm
-                      </span>
-                      <span className="mx-2">|</span>
-                      <span>100 pts</span>
-                    </div>
-                  </div>
-
-                  <div className="wd-assign-right-controls text-muted">
-                    <FaCheckCircle className="text-success me-2" />
-                    <IoEllipsisVertical className="fs-5" />
-                  </div>
-                </div>
-              </ListGroupItem>
-            </ListGroup>
-          </ListGroupItem>
-
-         
-          <ListGroupItem className="p-0 mb-4 fs-5 border-gray wd-assignments-group">
-            <div className="group-header p-3 ps-2 bg-secondary d-flex align-items-center">
-              <BsGripVertical className="me-2 fs-3" />
-              <span className="fw-semibold text-uppercase">Quizzes</span>
-              <div className="ms-auto d-flex align-items-center gap-2">
-                <Badge bg="light" text="dark" className="px-3 py-2 fw-normal">
-                  40% of Total
-                </Badge>
-                <Button variant="light" size="sm" className="border">
-                  <FaPlus />
-                </Button>
-                <Button variant="light" size="sm" className="border">
-                  <IoEllipsisVertical />
-                </Button>
-              </div>
-            </div>
-            <ListGroup className="rounded-0">
-              <ListGroupItem className="wd-assignment p-3 ps-2">
-                <div className="d-flex align-items-start gap-2">
-                  <BsGripVertical className="fs-4 mt-1" />
-                  <div className="mt-1">
-                    <HiOutlineDocumentText className="text-success fs-4" />
-                  </div>
-                  <div className="flex-fill">
-                    <Link
-                      href="/Courses/1234/Assignments/Q1"
-                      className="wd-assignment-title text-decoration-none text-dark"
-                    >
-                      Quiz 1
-                    </Link>
-                    <div className="wd-assignment-line2 text-muted">
-                      <span className="wd-assign-due">
-                        <span className="label">Due</span> Fri Sep 20 at 11:59pm
-                      </span>
-                      <span className="mx-2">|</span>
-                      <span>40 pts</span>
-                    </div>
-                  </div>
-                  <div className="wd-assign-right-controls text-muted">
-                    <FaCheckCircle className="text-success me-2" />
-                    <IoEllipsisVertical className="fs-5" />
-                  </div>
-                </div>
-              </ListGroupItem>
-            </ListGroup>
-          </ListGroupItem>
-        </ListGroup>
-      </div>
+            ))}
+          </ListGroup>
+        </ListGroupItem>
+      </ListGroup>
     </div>
   );
 }
