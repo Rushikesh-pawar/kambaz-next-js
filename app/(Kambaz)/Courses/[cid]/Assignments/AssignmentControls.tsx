@@ -1,43 +1,31 @@
-import { Button, Form, FormControl } from "react-bootstrap";
-import { FaPlus } from "react-icons/fa6";
-import { CiSearch } from "react-icons/ci";
+"use client";
+
+import { useRouter, useParams } from "next/navigation";
+import { Button } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { FaPlus } from "react-icons/fa";
 
 export default function AssignmentControls() {
-  return (
-    <div
-      id="wd-modules-controls"
-      className="d-flex justify-content-between align-items-center mb-4 p-2"
-    >
-      <Form className="d-flex align-items-center me-3">
-        <CiSearch size={28} className="me-2 text-muted" />
-        <FormControl
-          type="search"
-          placeholder="Search..."
-          className="p-2"
-          style={{ maxWidth: "300px" }}
-        />
-      </Form>
+  const { cid } = useParams();
+  const router = useRouter();
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
-      <div className="d-flex">
-        <Button
-          variant="secondary"
-          size="lg"
-          className="me-2 px-4"
-          id="wd-add-module-btn"
-        >
-          <FaPlus className="me-2 position-relative" style={{ bottom: "1px" }} />
-          Group
-        </Button>
+  return (
+    <div className="d-flex justify-content-end align-items-center mb-3">
+      {currentUser?.role === "FACULTY" && (
         <Button
           variant="danger"
           size="lg"
           className="px-4"
           id="wd-add-assignment-btn"
+          onClick={() =>
+            router.push(`/Courses/${cid}/Assignments/new`)
+          }
         >
           <FaPlus className="me-2 position-relative" style={{ bottom: "1px" }} />
           Assignment
         </Button>
-      </div>
+      )}
     </div>
   );
 }

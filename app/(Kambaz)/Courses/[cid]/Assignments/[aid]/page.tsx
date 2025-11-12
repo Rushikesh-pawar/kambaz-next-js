@@ -1,112 +1,151 @@
 "use client";
-
-import Form from "react-bootstrap/Form";
-import FormLabel from "react-bootstrap/FormLabel";
-import FormControl from "react-bootstrap/FormControl";
-import FormSelect from "react-bootstrap/FormSelect";
-import FormCheck from "react-bootstrap/FormCheck";
-import { useParams } from "next/navigation";
-import * as db from "../../../../Database";
-import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { addAssignment, updateAssignment } from "../reducer";
+import {
+  Form,
+  Row,
+  Col,
+  Card,
+  FormLabel,
+  FormControl,
+  CardBody,
+  FormSelect,
+  FormCheck,
+} from "react-bootstrap";
+import { useRef } from "react";
 
 export default function AssignmentEditor() {
-  const { cid, aid } = useParams<{ cid: string; aid: string }>();
-  const assignments = db.assignment;
-  const assignment = assignments.find((a) => a._id === aid);
+  const { cid, aid } = useParams();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
 
-  if (!assignment) return <div className="p-4 text-danger">Assignment not found.</div>;
+  const assignment =
+    aid !== "new" ? assignments.find((a: any) => a._id === aid) : null;
+
+  const nameRef = useRef<HTMLInputElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const pointsRef = useRef<HTMLInputElement>(null);
+  const dueRef = useRef<HTMLInputElement>(null);
+  const availableFromRef = useRef<HTMLInputElement>(null);
+  const availableUntilRef = useRef<HTMLInputElement>(null);
+
+  const handleCancel = () => router.push(`/Courses/${cid}/Assignments`);
+
+  const handleSave = () => {
+    const newAssignment = {
+      _id: assignment?._id,
+      title: nameRef.current?.value || "Untitled Assignment",
+      description: descriptionRef.current?.value || "",
+      points: Number(pointsRef.current?.value) || 100,
+      dueDate: dueRef.current?.value,
+      availableFrom: availableFromRef.current?.value,
+      availableUntil: availableUntilRef.current?.value,
+      course: cid,
+    };
+
+    if (aid === "new") {
+      dispatch(addAssignment(newAssignment));
+    } else {
+      dispatch(updateAssignment(newAssignment));
+    }
+
+    router.push(`/Courses/${cid}/Assignments`);
+  };
+
+  if (aid !== "new" && !assignment) {
+    return <div className="p-4 text-danger">Assignment not found.</div>;
+  }
 
   return (
-    <div id="wd-assignments-editor" className="p-3">
-      <Form>
-        {/* Assignment Name */}
-        <div className="mb-3">
-          <FormLabel htmlFor="wd-name">Assignment Name</FormLabel>
-          <FormControl id="wd-name" defaultValue={assignment.title} />
-        </div>
+    <div className="container-fluid" id="wd-assignments-editor">
+      <Card className="border-0">
+        <CardBody className="p-4">
+          <Form className="mb-3">
+            <FormLabel>Assignment Name</FormLabel>
+            <FormControl
+              type="text"
+              defaultValue={assignment?.title ?? ""}
+              ref={nameRef}
+            />
+          </Form>
 
-        {/* Description */}
-        <div className="mb-4">
-          <FormLabel htmlFor="wd-description">Description</FormLabel>
-          <FormControl
-            as="textarea"
-            id="wd-description"
-            rows={6}
-            defaultValue="Assignment Description"
-          />
-        </div>
+          <Form className="mb-4">
+            <FormLabel>Description</FormLabel>
+            <FormControl
+              as="textarea"
+              rows={10}
+              defaultValue={
+                assignment?.description ??
+                "The assignment is available online. Submit your project link below."
+              }
+              ref={descriptionRef}
+            />
+          </Form>
 
-        {/* Points */}
-        <div className="mb-3">
-          <FormLabel htmlFor="wd-points">Points</FormLabel>
-          <FormControl id="wd-points" type="number" defaultValue={100} />
-        </div>
+          <Row className="g-3 mb-3 align-items-center">
+            <Col sm={3} className="text-sm-end">
+              <FormLabel>Points</FormLabel>
+            </Col>
+            <Col sm={9}>
+              <FormControl
+                type="number"
+                defaultValue={assignment?.points ?? 100}
+                ref={pointsRef}
+              />
+            </Col>
+          </Row>
 
-        {/* Assignment Group */}
-        <div className="mb-3">
-          <FormLabel htmlFor="wd-group">Assignment Group</FormLabel>
-          <FormSelect id="wd-group" defaultValue="ASSIGNMENTS">
-            <option value="ASSIGNMENTS">ASSIGNMENTS</option>
-            <option value="QUIZZES">QUIZZES</option>
-            <option value="PROJECTS">PROJECTS</option>
-          </FormSelect>
-        </div>
+          <Row className="g-3 mb-3">
+            <Col sm={3} className="text-sm-end">
+              <FormLabel>Due Date</FormLabel>
+            </Col>
+            <Col sm={9}>
+              <FormControl
+                type="date"
+                defaultValue={assignment?.dueDate ?? ""}
+                ref={dueRef}
+              />
+            </Col>
+          </Row>
 
-        {/* Display Grade */}
-        <div className="mb-4">
-          <FormLabel htmlFor="wd-display-grade-as">Display Grade as</FormLabel>
-          <FormSelect id="wd-display-grade-as" defaultValue="PERCENTAGE">
-            <option value="PERCENTAGE">Percentage</option>
-            <option value="POINTS">Points</option>
-            <option value="PASS_FAIL">Complete/Incomplete</option>
-          </FormSelect>
-        </div>
+          <Row className="g-3 mb-4">
+            <Col sm={3} className="text-sm-end">
+              <FormLabel>Available From</FormLabel>
+            </Col>
+            <Col sm={9}>
+              <FormControl
+                type="date"
+                defaultValue={assignment?.availableFrom ?? ""}
+                ref={availableFromRef}
+              />
+            </Col>
+          </Row>
 
-        {/* Submission Type */}
-        <div className="mb-4">
-          <FormLabel htmlFor="wd-submission-type">Submission Type</FormLabel>
-          <FormSelect id="wd-submission-type" defaultValue="ONLINE" className="mb-2">
-            <option value="ONLINE">Online</option>
-            <option value="ON_PAPER">On Paper</option>
-            <option value="NO_SUBMISSION">No Submission</option>
-          </FormSelect>
+          <Row className="g-3 mb-4">
+            <Col sm={3} className="text-sm-end">
+              <FormLabel>Available Until</FormLabel>
+            </Col>
+            <Col sm={9}>
+              <FormControl
+                type="date"
+                defaultValue={assignment?.availableUntil ?? ""}
+                ref={availableUntilRef}
+              />
+            </Col>
+          </Row>
 
-          <div className="small text-muted mb-1">Online Entry Options</div>
-          <div className="d-grid gap-2">
-            
-            <FormCheck type="checkbox" id="wd-file-upload" label="Upload files" />
+          <div className="d-flex justify-content-end gap-2">
+            <button onClick={handleCancel} className="btn btn-light">
+              Cancel
+            </button>
+            <button onClick={handleSave} className="btn btn-danger">
+              Save
+            </button>
           </div>
-        </div>
-
-        {/* Due / Available Dates */}
-        <div className="mb-4">
-          <FormLabel htmlFor="wd-assign-to">Assign to</FormLabel>
-          <FormControl id="wd-assign-to" defaultValue="Everyone" className="mb-3" />
-          <FormLabel htmlFor="wd-due-date">Due</FormLabel>
-          <FormControl id="wd-due-date" type="date" defaultValue="2024-05-13" className="mb-3" />
-
-          <div className="d-flex gap-3 flex-column flex-sm-row">
-            <div className="flex-fill">
-              <FormLabel htmlFor="wd-available-from">Available from</FormLabel>
-              <FormControl id="wd-available-from" type="date" defaultValue="2024-05-06" />
-            </div>
-            <div className="flex-fill">
-              <FormLabel htmlFor="wd-available-until">Until</FormLabel>
-              <FormControl id="wd-available-until" type="date" defaultValue="2024-05-20" />
-            </div>
-          </div>
-        </div>
-
-        {/* Buttons */}
-        <div className="d-flex justify-content-end gap-2 mt-4">
-          <Link href={`/Courses/${cid}/Assignments`} className="btn btn-light">
-            Cancel
-          </Link>
-          <Link href={`/Courses/${cid}/Assignments`} className="btn btn-danger">
-            Save
-          </Link>
-        </div>
-      </Form>
+        </CardBody>
+      </Card>
     </div>
   );
 }

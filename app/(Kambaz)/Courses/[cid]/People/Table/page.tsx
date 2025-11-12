@@ -4,11 +4,14 @@ import React from "react";
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 import { useParams } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../store";
 import * as db from "../../../../Database";  // ✅ imports all from index.ts
 
 export default function PeopleTable() {
   const { cid } = useParams();
-  const { users, enrollments } = db;
+  const { users } = db;
+  const { enrollments } = useSelector((state: RootState) => state.enrollmentsReducer);
 
   // ✅ Filter users based on enrollment in current course
   const enrolledUsers = users.filter((user: any) =>
