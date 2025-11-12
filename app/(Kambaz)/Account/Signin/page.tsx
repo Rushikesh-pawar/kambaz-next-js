@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { redirect } from "next/dist/client/components/navigation";
-import { setCurrentUser } from "../reducer";
+import { setCurrentUser, User } from "../reducer";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
 import * as db from "../../Database";
@@ -17,7 +17,7 @@ export default function Signin() {
         u.password === credentials.password
     );
     if (!user) return;
-    dispatch(setCurrentUser(user));
+    dispatch(setCurrentUser(user as User));
     redirect("/Dashboard");
   };
 
