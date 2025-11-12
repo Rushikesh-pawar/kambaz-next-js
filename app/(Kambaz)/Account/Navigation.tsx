@@ -1,7 +1,12 @@
+"use client";
 import Link from "next/link";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 export default function AccountNavigation() {
+   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const links = currentUser ? ["Profile"] : ["Signin", "Signup"];
   return (
     <div id="wd-account-navigation" className="p-3" style={{ maxWidth: 200 }}>
       <ListGroup className="rounded-0 list-group-flush">
