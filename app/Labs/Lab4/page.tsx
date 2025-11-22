@@ -12,7 +12,7 @@ import StringStateVariables from "./StringStateVariables";
 import ReduxExamples from "./ReduxExamples";
 import store from "./store"
 import { Provider } from "react-redux";
-import HelloRedux from "./ReduxExamples/HelloRedux";
+
 
 export default function Lab4() {
   function sayHello() {
