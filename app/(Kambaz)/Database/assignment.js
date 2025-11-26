@@ -1,3 +1,4 @@
+export default
 [
   { "_id": "A101", "title": "Propulsion Assignment", "course": "RS101" },
   { "_id": "A102", "title": "Combustion Analysis", "course": "RS101" },

@@ -2,7 +2,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 
-import db from "../../../Database/assignment.json"; // ✅ note singular name
+import db from "../../../Database/assignment"; // ✅ note singular name
 
 const initialState = {
   assignments: db, // ✅ your JSON array
