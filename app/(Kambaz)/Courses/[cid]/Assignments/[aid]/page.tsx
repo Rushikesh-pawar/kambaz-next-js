@@ -1,151 +1,179 @@
 "use client";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
-import { addAssignment, updateAssignment } from "../reducer";
 import {
-  Form,
-  Row,
-  Col,
-  Card,
-  FormLabel,
-  FormControl,
-  CardBody,
-  FormSelect,
-  FormCheck,
+  Button,
+  ListGroup,
+  ListGroupItem,
+  Modal,
 } from "react-bootstrap";
-import { useRef } from "react";
+import { BsGripVertical } from "react-icons/bs";
+import { IoMdArrowDropdown } from "react-icons/io";
+import { IoEllipsisVertical } from "react-icons/io5";
+import { PiNotePencilBold } from "react-icons/pi";
+import { FaTrash, FaPencil } from "react-icons/fa6";
+import { BsPlus } from "react-icons/bs";
+// @ts-ignore
+import AssignmentControls from "./AssignmentControls";
+import LessonControlButtons from "../../Modules/LessonControlButtons";
+import {
+  setAssignments,
+  deleteAssignment,
+} from "../reducer";
+import { FaCheckCircle } from "react-icons/fa";
+// @ts-ignore
+import * as client from "../client";
 
-export default function AssignmentEditor() {
-  const { cid, aid } = useParams();
+export default function Assignments() {
+  const { cid } = useParams();
   const router = useRouter();
   const dispatch = useDispatch();
-  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
 
-  const assignment =
-    aid !== "new" ? assignments.find((a: any) => a._id === aid) : null;
+  const { assignments } = useSelector(
+    (state: any) => state.assignmentReducer
+  );
+  const { currentUser } = useSelector(
+    (state: any) => state.accountReducer
+  );
 
-  const nameRef = useRef<HTMLInputElement>(null);
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const pointsRef = useRef<HTMLInputElement>(null);
-  const dueRef = useRef<HTMLInputElement>(null);
-  const availableFromRef = useRef<HTMLInputElement>(null);
-  const availableUntilRef = useRef<HTMLInputElement>(null);
+  const canEdit =
+    currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
 
-  const handleCancel = () => router.push(`/Courses/${cid}/Assignments`);
+  const [showDelete, setShowDelete] = useState(false);
+  const [assignmentToDelete, setAssignmentToDelete] = useState<any>(null);
 
-  const handleSave = () => {
-    const newAssignment = {
-      _id: assignment?._id,
-      title: nameRef.current?.value || "Untitled Assignment",
-      description: descriptionRef.current?.value || "",
-      points: Number(pointsRef.current?.value) || 100,
-      dueDate: dueRef.current?.value,
-      availableFrom: availableFromRef.current?.value,
-      availableUntil: availableUntilRef.current?.value,
-      course: cid,
-    };
+  const courseAssignments = assignments.filter(
+    (assignment: any) => assignment.course === cid
+  );
 
-    if (aid === "new") {
-      dispatch(addAssignment(newAssignment));
-    } else {
-      dispatch(updateAssignment(newAssignment));
+  const fetchAssignments = async () => {
+    try {
+      const assignments = await client.findAssignmentsForCourse(cid as string);
+      dispatch(setAssignments(assignments));
+    } catch (error) {
+      console.error("Error fetching assignments:", error);
     }
-
-    router.push(`/Courses/${cid}/Assignments`);
   };
 
-  if (aid !== "new" && !assignment) {
-    return <div className="p-4 text-danger">Assignment not found.</div>;
-  }
+  useEffect(() => {
+    fetchAssignments();
+  }, [cid]);
+
+  const handleAskDelete = (assignment: any) => {
+    setAssignmentToDelete(assignment);
+    setShowDelete(true);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDelete(false);
+    setAssignmentToDelete(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (assignmentToDelete?._id) {
+      try {
+        await client.deleteAssignment(assignmentToDelete._id);
+        dispatch(deleteAssignment(assignmentToDelete._id));
+      } catch (error) {
+        console.error("Error deleting assignment:", error);
+      }
+    }
+    setShowDelete(false);
+    setAssignmentToDelete(null);
+  };
+
+  const handleEditAssignment = (assignmentId: string) => {
+    router.push(`/Courses/${cid}/Assignments/${assignmentId}?edit=true`);
+  };
 
   return (
-    <div className="container-fluid" id="wd-assignments-editor">
-      <Card className="border-0">
-        <CardBody className="p-4">
-          <Form className="mb-3">
-            <FormLabel>Assignment Name</FormLabel>
-            <FormControl
-              type="text"
-              defaultValue={assignment?.title ?? ""}
-              ref={nameRef}
-            />
-          </Form>
+    <div id="wd-assignments">
+      <AssignmentControls />
 
-          <Form className="mb-4">
-            <FormLabel>Description</FormLabel>
-            <FormControl
-              as="textarea"
-              rows={10}
-              defaultValue={
-                assignment?.description ??
-                "The assignment is available online. Submit your project link below."
-              }
-              ref={descriptionRef}
-            />
-          </Form>
-
-          <Row className="g-3 mb-3 align-items-center">
-            <Col sm={3} className="text-sm-end">
-              <FormLabel>Points</FormLabel>
-            </Col>
-            <Col sm={9}>
-              <FormControl
-                type="number"
-                defaultValue={assignment?.points ?? 100}
-                ref={pointsRef}
-              />
-            </Col>
-          </Row>
-
-          <Row className="g-3 mb-3">
-            <Col sm={3} className="text-sm-end">
-              <FormLabel>Due Date</FormLabel>
-            </Col>
-            <Col sm={9}>
-              <FormControl
-                type="date"
-                defaultValue={assignment?.dueDate ?? ""}
-                ref={dueRef}
-              />
-            </Col>
-          </Row>
-
-          <Row className="g-3 mb-4">
-            <Col sm={3} className="text-sm-end">
-              <FormLabel>Available From</FormLabel>
-            </Col>
-            <Col sm={9}>
-              <FormControl
-                type="date"
-                defaultValue={assignment?.availableFrom ?? ""}
-                ref={availableFromRef}
-              />
-            </Col>
-          </Row>
-
-          <Row className="g-3 mb-4">
-            <Col sm={3} className="text-sm-end">
-              <FormLabel>Available Until</FormLabel>
-            </Col>
-            <Col sm={9}>
-              <FormControl
-                type="date"
-                defaultValue={assignment?.availableUntil ?? ""}
-                ref={availableUntilRef}
-              />
-            </Col>
-          </Row>
-
-          <div className="d-flex justify-content-end gap-2">
-            <button onClick={handleCancel} className="btn btn-light">
-              Cancel
-            </button>
-            <button onClick={handleSave} className="btn btn-danger">
-              Save
-            </button>
+      <ListGroup className="rounded-0" id="wd-assignments">
+        <ListGroupItem className="wd-assignment p-0 mb-5 fs-5 border-gray">
+          <div className="wd-title p-3 ps-2 bg-secondary d-flex align-items-center">
+            <BsGripVertical className="me-2 fs-3" />
+            <IoMdArrowDropdown />
+            <span className="ms-1">ASSIGNMENTS</span>
           </div>
-        </CardBody>
-      </Card>
+
+          <ListGroup className="wd-assignment-list rounded-0">
+            {courseAssignments.map((assignment: any) => (
+              <ListGroupItem
+                key={assignment._id}
+                className="wd-assignment-list-item p-3 ps-1 d-flex align-items-start"
+              >
+                <div className="d-flex align-items-start gap-2">
+                  <BsGripVertical className="fs-3" />
+                  <PiNotePencilBold color="green" className="fs-3" />
+                  <div className="d-flex flex-column">
+                    <Link
+                      href={`/Courses/${cid}/Assignments/${assignment._id}`}
+                      className="wd-assignment-link text-decoration-none"
+                    >
+                      {assignment.title}
+                    </Link>
+                    <small className="text-muted">
+                      Assignment Weightage - 5%
+                    </small>
+                  </div>
+                </div>
+
+                <div className="d-flex align-items-center gap-2 ms-auto">
+                  <LessonControlButtons />
+                  {canEdit && (
+                    <>
+                      <FaPencil
+                        className="text-primary fs-5"
+                        onClick={() => handleEditAssignment(assignment._id)}
+                        role="button"
+                      />
+                      <Button
+                        variant="link"
+                        className="text-danger p-0"
+                        onClick={() => handleAskDelete(assignment)}
+                        aria-label={`Delete ${assignment.title}`}
+                      >
+                        <FaTrash className="fs-5" />
+                      </Button>
+                    </>
+                  )}
+                  <FaCheckCircle className="text-success" />
+                  <BsPlus className="fs-4" />
+                  <IoEllipsisVertical className="fs-4" />
+                </div>
+              </ListGroupItem>
+            ))}
+          </ListGroup>
+        </ListGroupItem>
+      </ListGroup>
+
+      <Modal show={showDelete} onHide={handleCancelDelete} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete assignment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {assignmentToDelete ? (
+            <>
+              Are you sure you want to delete{" "}
+              <strong>{assignmentToDelete.title}</strong>?
+            </>
+          ) : (
+            "Are you sure you want to delete this assignment?"
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCancelDelete}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleConfirmDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

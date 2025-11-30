@@ -19,6 +19,11 @@ export default function AccountNavigation() {
         <ListGroupItem className="border-0 rounded-0">
           <Link href="Profile" className="text-danger text-decoration-none">Profile</Link>
         </ListGroupItem>
+        {currentUser && currentUser.role === "ADMIN" && (
+          <ListGroupItem className="border-0 rounded-0">
+            <Link href="Users" className="text-danger text-decoration-none">Users</Link>
+          </ListGroupItem>
+        )}
       </ListGroup>
     </div>
   );

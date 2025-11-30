@@ -3,23 +3,11 @@
 import React from "react";
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
-import { useParams } from "next/navigation";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../store";
-import * as db from "../../../../Database";  // ✅ imports all from index.ts
 
-export default function PeopleTable() {
-  const { cid } = useParams();
-  const { users } = db;
-  const { enrollments } = useSelector((state: RootState) => state.enrollmentsReducer);
 
-  // ✅ Filter users based on enrollment in current course
-  const enrolledUsers = users.filter((user: any) =>
-    enrollments.some(
-      (enrollment: any) =>
-        enrollment.user === user._id && enrollment.course === cid
-    )
-  );
+export default function PeopleTable({ users = [], fetchUsers }: { users?: any[]; fetchUsers: () => void; }) {
+
+
 
   return (
     <div id="wd-people-table">
@@ -35,7 +23,7 @@ export default function PeopleTable() {
           </tr>
         </thead>
         <tbody>
-          {enrolledUsers.map((user: any) => (
+          {users.map((user: any) => (
             <tr key={user._id}>
               <td className="wd-full-name text-nowrap">
                 <FaUserCircle className="me-2 fs-1 text-secondary" />
