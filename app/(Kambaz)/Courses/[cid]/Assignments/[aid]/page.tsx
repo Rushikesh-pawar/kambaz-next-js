@@ -15,16 +15,16 @@ import { IoEllipsisVertical } from "react-icons/io5";
 import { PiNotePencilBold } from "react-icons/pi";
 import { FaTrash, FaPencil } from "react-icons/fa6";
 import { BsPlus } from "react-icons/bs";
-// @ts-ignore
-import AssignmentControls from "./AssignmentControls";
+
+import AssignmentControls from "../AssignmentControls";
 import LessonControlButtons from "../../Modules/LessonControlButtons";
 import {
   setAssignments,
   deleteAssignment,
 } from "../reducer";
 import { FaCheckCircle } from "react-icons/fa";
-// @ts-ignore
-import * as client from "../client";
+//D:\2025\fall\webdev\kambaz-next-js\app\(Kambaz)\Courses\client.ts
+import * as client from "../../../../Courses/client";
 
 export default function Assignments() {
   const { cid } = useParams();
