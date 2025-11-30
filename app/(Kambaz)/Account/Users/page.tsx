@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import PeopleTable from "../../Courses/People/Table";
+import PeopleTable from "../../Courses/[cid]/People/Table/page";
 import * as client from "../client";
 export default function Users() {
  const [users, setUsers] = useState<any[]>([]);
