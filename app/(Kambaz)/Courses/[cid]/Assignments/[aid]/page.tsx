@@ -23,7 +23,7 @@ import {
   deleteAssignment,
 } from "../reducer";
 import { FaCheckCircle } from "react-icons/fa";
-//D:\2025\fall\webdev\kambaz-next-js\app\(Kambaz)\Courses\client.ts
+
 import * as client from "../../../../Courses/client";
 
 export default function Assignments() {
