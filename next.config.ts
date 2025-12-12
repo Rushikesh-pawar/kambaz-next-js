@@ -1,11 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-    eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
-  },
+	async rewrites() {
+		const backend = process.env.BACKEND_URL || 'http://localhost:4000';
+		return [
+			{
+				source: '/api/:path*',
+				destination: `${backend}/api/:path*`,
+			},
+		];
+	},
 };
 
 export default nextConfig;
