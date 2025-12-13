@@ -7,8 +7,8 @@ export default function Lab1() {
             <h2>Lab 1</h2>
             <section id="wd-lab1-landing" style={{ marginBottom: 24 }}>
                 <h3>CS5610 Lab 1 - Landing</h3>
-                <p><strong>Name:</strong> Samyak Shah</p>
-                <p><strong>NUID:</strong> 002051486</p>
+                <p><strong>Name:</strong> Rushikesh Pawar</p>
+                <p><strong>NUID:</strong> 002312125</p>
                 <p><strong>Section:</strong> CS5610</p>
                 <div>
                     <h4>Lab Assignments</h4>
@@ -26,7 +26,7 @@ export default function Lab1() {
                     <h4>Links</h4>
                     <ul>
                         <li><Link href="/Dashboard">Kambaz Application</Link></li>
-                        <li><a href="https://github.com/samyak0510/kambaz-next-js" target="_blank" rel="noopener noreferrer">Source Code Repository</a></li>
+                        <li><a href="https://github.com/Rushikesh-pawar/kambaz-next-js" target="_blank" rel="noopener noreferrer">Source Code Repository</a></li>
                     </ul>
                 </div>
             </section>
@@ -291,7 +291,7 @@ export default function Lab1() {
             <h4>Anchor tag</h4>
             Please <a href="https://www.lipsum.com" id="wd-lipsum">click here</a>
             to get dummy text<br /> <h4>Github tag</h4>
-            Please <a href="https://github.com/samyak0510/kambaz-next-js" id="wd-github">click here</a>
+            Please <a href="https://github.com/Rushikesh-pawar/kambaz-next-js" id="wd-github">click here</a>
             to access github<br />
         </div>
     );
