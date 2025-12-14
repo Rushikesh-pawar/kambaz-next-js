@@ -20,13 +20,16 @@ export default function PeopleTable({
     // Get current user to check role
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const isAdmin = currentUser?.role === "ADMIN";
+    const isEditor = currentUser && ["ADMIN", "FACULTY", "TA"].includes(currentUser.role);
 
     return (
         <div id="wd-people-table">
-            {/* Only show PeopleDetails modal for admins */}
-            {showDetails && isAdmin && (
+            {/* Show PeopleDetails modal when requested; Details will hide admin-only controls */}
+            {showDetails && (
                 <PeopleDetails
                     uid={showUserId}
+                    isAdmin={isAdmin}
+                    isEditor={isEditor}
                     onClose={() => {
                         setShowDetails(false);
                         fetchUsers();
@@ -51,15 +54,12 @@ export default function PeopleTable({
                             <tr key={user._id}>
                                 <td className="wd-full-name text-nowrap">
                                     <span
-                                        className={isAdmin ? "text-decoration-underline" : "text-decoration-none"}
+                                        className={isEditor ? "text-decoration-underline" : "text-decoration-none"}
                                         onClick={() => {
-                                            // Only allow clicking if admin
-                                            if (isAdmin) {
-                                                setShowDetails(true);
-                                                setShowUserId(user._id);
-                                            }
+                                            setShowDetails(true);
+                                            setShowUserId(user._id);
                                         }}
-                                        style={{ cursor: isAdmin ? 'pointer' : 'default' }}
+                                        style={{ cursor: 'pointer' }}
                                     >
                                         <FaUserCircle className="me-2 fs-1 text-secondary" />
                                         <span className="wd-first-name">{user?.firstName || 'Unknown'} </span>
